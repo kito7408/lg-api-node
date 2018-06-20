@@ -7,11 +7,11 @@ connection = mysql.createConnection({
 	database: 'testapimysql'
 })
 
-let productModel = {};
+let colorModel = {};
 
-productModel.getProducts = (callback) => {
+colorModel.getColors = (callback) => {
 	if(connection){
-		connection.query('SELECT * FROM product ORDER BY id',
+		connection.query('SELECT * FROM color ORDER BY id',
 			(err, rows) => {
 				if(err){
 					throw err;
@@ -22,9 +22,9 @@ productModel.getProducts = (callback) => {
 	}
 };
 
-productModel.insertProduct = (productData, callback) => {
+colorModel.insertColor = (colorData, callback) => {
 	if(connection){
-		connection.query('INSERT INTO product SET ?', productData,
+		connection.query('INSERT INTO color SET ?', colorData,
 			(err, result) => {
 				if(err){
 					throw err;
@@ -37,36 +37,32 @@ productModel.insertProduct = (productData, callback) => {
 	}
 };
 
-productModel.updateProduct = (productData, callback) => {
+colorModel.updateColor = (colorData, callback) => {
 	if(connection){
-		const sql = 'UPDATE product SET '+
-		'name = "' + productData.name +
-		'", size = "' + productData.size +
-		'", description = "' + productData.description +
-		'", category_id = "' + productData.category_id +
-		'", color_id = "' + productData.color_id +
-		'" WHERE id = ' + productData.id;
+		const sql = 'UPDATE color SET '+
+		'name = "' + colorData.name + 
+		'" WHERE id = ' + colorData.id;
 
 		connection.query(sql, (err,result) => {
 			if(err){
 				throw err;
 			}else{
 				callback(null, {
-					updatedId: productData.id,
-					msg: "Product Updated"
+					updatedId: colorData.id,
+					msg: "Color Updated"
 				});
 			}
 		})
 	}
 };
 
-productModel.deleteProduct = (id, callback) => {
+colorModel.deleteColor = (id, callback) => {
 	if(connection){
-		let sql = 'SELECT * FROM product WHERE id = ' + id;
+		let sql = 'SELECT * FROM color WHERE id = ' + id;
 
 		connection.query(sql, (err, row) => {
 			if(row){
-				let sql = 'DELETE FROM product WHERE id = ' + id;
+				let sql = 'DELETE FROM color WHERE id = ' + id;
 				connection.query(sql, (err, result) => {
 					if(err){
 						throw err;
@@ -86,4 +82,4 @@ productModel.deleteProduct = (id, callback) => {
 	}
 };
 
-module.exports = productModel;
+module.exports = colorModel;

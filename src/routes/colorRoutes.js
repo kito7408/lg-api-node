@@ -1,25 +1,24 @@
-const User = require('../models/user');
+const Color = require('../models/color');
 
-module.exports = function(app){
+module.exports = function(app) {
 
-	app.get('/users', (req, res) => {
-		User.getUsers((err, data) => {
+    app.get('/colors', (req, res) => {
+		Color.getColors((err, data) => {
 			res.json(data);
 		});
 	});
 
-	app.post('/users',(req,res) => {
-		const userData = {
+    app.post('/colors',(req,res) => {
+		const colorData = {
 			id: null,
-			name: req.body.name,
-			last_name: req.body.last_name
+			name: req.body.name
 		};
 
-		User.insertUser(userData, (err,data) => {
+		Color.insertColor(colorData, (err,data) => {
 			if(data && data.insertId){
 				res.json({
 					success: true,
-					msg: 'User Inserted',
+					msg: 'Color Inserted',
 					data: data
 				})
 			}else{
@@ -31,15 +30,14 @@ module.exports = function(app){
 		})
 	});
 
-	app.put('/users/:id',(req,res) => {
+    app.put('/colors/:id',(req,res) => {
 
-		const userData = {
+		const colorData = {
 			id: req.params.id,
-			name: req.body.name,
-			last_name: req.body.last_name
+			name: req.body.name
 		};
 
-		User.updateUser(userData, (err, data) => {
+		Color.updateColor(colorData, (err, data) => {
 			if(data && data.msg){
 				res.json({
 					success: true,
@@ -52,10 +50,10 @@ module.exports = function(app){
 				})
 			}
 		})
-	});
-
-	app.delete('/users/:id', (req,res) => {
-		User.deleteUser(req.params.id, (err, data) => {
+    });
+    
+    app.delete('/colors/:id', (req,res) => {
+		Color.deleteColor(req.params.id, (err, data) => {
 			if(data && data.msg == 'deleted' || data.msg == 'not exist') {
 				res.json({
 					success: true,
