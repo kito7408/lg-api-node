@@ -7,11 +7,11 @@ connection = mysql.createConnection({
 	database: 'testapimysql'
 })
 
-let userModel = {};
+let categoryModel = {};
 
-userModel.getUsers = (callback) => {
-	if(connection){
-		connection.query('SELECT * FROM users ORDER BY id',
+categoryModel.getCategories = (callback) => {
+    if(connection){
+		connection.query('SELECT * FROM category ORDER BY id',
 			(err, rows) => {
 				if(err){
 					throw err;
@@ -22,9 +22,9 @@ userModel.getUsers = (callback) => {
 	}
 };
 
-userModel.insertUser = (userData, callback) => {
+categoryModel.insertCategory = (categoryData, callback) => {
 	if(connection){
-		connection.query('INSERT INTO users SET ?', userData,
+		connection.query('INSERT INTO category SET ?', categoryData,
 			(err, result) => {
 				if(err){
 					throw err;
@@ -37,33 +37,32 @@ userModel.insertUser = (userData, callback) => {
 	}
 };
 
-userModel.updateUser = (userData, callback) => {
+categoryModel.updateCategory = (categoryData, callback) => {
 	if(connection){
-		const sql = 'UPDATE users SET '+
-		'name = "' + userData.name +
-		'", last_name = "' + userData.last_name +
-		'" WHERE id = ' + userData.id;
+		const sql = 'UPDATE category SET '+
+		'name = "' + categoryData.name +
+		'" WHERE id = ' + categoryData.id;
 
 		connection.query(sql, (err,result) => {
 			if(err){
 				throw err;
 			}else{
 				callback(null, {
-					updatedId: userData.id,
-					msg: "User Updated"
+                    updatedId: categoryData.id,
+					msg: "Category Updated"
 				});
 			}
 		})
 	}
 };
 
-userModel.deleteUser = (id, callback) => {
+categoryModel.deleteCategory = (id, callback) => {
 	if(connection){
-		let sql = 'SELECT * FROM users WHERE id = ' + id;
+		let sql = 'SELECT * FROM category WHERE id = ' + id;
 
 		connection.query(sql, (err, row) => {
 			if(row){
-				let sql = 'DELETE FROM users WHERE id = ' + id;
+				let sql = 'DELETE FROM category WHERE id = ' + id;
 				connection.query(sql, (err, result) => {
 					if(err){
 						throw err;
@@ -83,4 +82,4 @@ userModel.deleteUser = (id, callback) => {
 	}
 };
 
-module.exports = userModel;
+module.exports = categoryModel;

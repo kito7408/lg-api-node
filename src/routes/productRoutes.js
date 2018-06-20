@@ -1,25 +1,24 @@
-const User = require('../models/user');
+const Category = require('../models/category');
 
 module.exports = function(app){
 
-	app.get('/users', (req, res) => {
-		User.getUsers((err, data) => {
-			res.json(data);
-		});
-	});
-
-	app.post('/users',(req,res) => {
-		const userData = {
+    app.get('/categories', (req, res) => {
+        Category.getCategories((err, data) => {
+            res.json(data);
+        });
+    });
+    
+    app.post('/categories',(req,res) => {
+		const categoryData = {
 			id: null,
 			name: req.body.name,
-			last_name: req.body.last_name
 		};
 
-		User.insertUser(userData, (err,data) => {
+		Category.insertCategory(categoryData, (err,data) => {
 			if(data && data.insertId){
 				res.json({
 					success: true,
-					msg: 'Usuario Inserted',
+					msg: 'Category Inserted',
 					data: data
 				})
 			}else{
@@ -29,17 +28,16 @@ module.exports = function(app){
 				})
 			}
 		})
-	});
+    });
+    
+    app.put('/categories/:id',(req,res) => {
 
-	app.put('/users/:id',(req,res) => {
-
-		const userData = {
+		const categoryData = {
 			id: req.params.id,
-			name: req.body.name,
-			last_name: req.body.last_name
+			name: req.body.name
 		};
 
-		User.updateUser(userData, (err, data) => {
+		Category.updateCategory(categoryData, (err, data) => {
 			if(data && data.msg){
 				res.json({
 					success: true,
@@ -52,10 +50,10 @@ module.exports = function(app){
 				})
 			}
 		})
-	});
-
-	app.delete('/users/:id', (req,res) => {
-		User.deleteUser(req.params.id, (err, data) => {
+    });
+    
+    app.delete('/categories/:id', (req,res) => {
+		Category.deleteCategory(req.params.id, (err, data) => {
 			if(data && data.msg == 'deleted' || data.msg == 'not exist') {
 				res.json({
 					success: true,
