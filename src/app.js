@@ -18,6 +18,7 @@ require('./routes/colorRoutes')(app);
 require('./routes/productRoutes')(app);
 require('./routes/imageRoutes')(app);
 require('./routes/beaconRoutes')(app);
+require('./routes/predictionRoutes')(app);
 
 
 app.listen(app.get('port'), () => {
