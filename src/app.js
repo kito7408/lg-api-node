@@ -16,6 +16,7 @@ require('./routes/userRoutes')(app);
 require('./routes/categoryRoutes')(app);
 require('./routes/colorRoutes')(app);
 require('./routes/productRoutes')(app);
+require('./routes/imageRoutes')(app);
 
 
 app.listen(app.get('port'), () => {
