@@ -12,10 +12,11 @@ module.exports = function(app){
 		const categoryData = {
 			id: null,
 			name: req.body.name,
+			description: req.body.description
 		};
 
 		Category.insertCategory(categoryData, (err,data) => {
-			if(data && data.insertId){
+			if(data){
 				res.json({
 					success: true,
 					msg: 'Category Inserted',
@@ -34,11 +35,12 @@ module.exports = function(app){
 
 		const categoryData = {
 			id: req.params.id,
-			name: req.body.name
+			name: req.body.name,
+			description: req.body.description
 		};
 
 		Category.updateCategory(categoryData, (err, data) => {
-			if(data && data.msg){
+			if(data){
 				res.json({
 					success: true,
 					data: data
@@ -54,10 +56,10 @@ module.exports = function(app){
     
     app.delete('/categories/:id', (req,res) => {
 		Category.deleteCategory(req.params.id, (err, data) => {
-			if(data && data.msg == 'deleted' || data.msg == 'not exist') {
+			if(data) {
 				res.json({
 					success: true,
-					data: data
+					dataDeleted: data
 				})
 			}else{
 				res.status(500).json({

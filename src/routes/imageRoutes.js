@@ -13,11 +13,11 @@ module.exports = function(app){
 			id: null,
 			name: req.body.name,
 			url: req.body.url,
-			product_id: req.body.product_id
+			productId: req.body.productId
 		};
 
 		Image.insertImage(imageData, (err,data) => {
-			if(data && data.insertId){
+			if(data){
 				res.json({
 					success: true,
 					msg: 'Image Inserted',
@@ -38,11 +38,11 @@ module.exports = function(app){
 			id: req.params.id,
 			name: req.body.name,
 			url: req.body.url,
-			product_id: req.body.product_id
+			productId: req.body.productId
 		};
 
 		Image.updateImage(imageData, (err, data) => {
-			if(data && data.msg){
+			if(data){
 				res.json({
 					success: true,
 					data: data
@@ -58,7 +58,7 @@ module.exports = function(app){
     
     app.delete('/images/:id', (req,res) => {
 		Image.deleteImage(req.params.id, (err, data) => {
-			if(data && data.msg == 'deleted' || data.msg == 'not exist') {
+			if(data) {
 				res.json({
 					success: true,
 					data: data

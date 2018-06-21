@@ -1,85 +1,50 @@
-const mysql = require('mysql');
+var Sequelize = require('sequelize');
 
-connection = mysql.createConnection({
-	host: 'localhost',
-	user: 'root',
-	password: 'root',
-	database: 'testapimysql'
-})
+var connection = new Sequelize('lgsignage','root','root', {
+    dialect: 'mysql',
+    operatorsAliases: false,
+});
+
+const Category = connection.define('category',{
+	name: {
+		type: Sequelize.STRING,
+		allowNull: false
+	},
+	description: Sequelize.TEXT
+});
+
+//connection.sync();
 
 let categoryModel = {};
 
 categoryModel.getCategories = (callback) => {
-    if(connection){
-		connection.query('SELECT * FROM category ORDER BY id',
-			(err, rows) => {
-				if(err){
-					throw err;
-				}else{
-					callback(null, rows);
-				}
-			})
-	}
+	Category.findAll().then(categories => {
+		callback(null, categories);
+	});
 };
 
 categoryModel.insertCategory = (categoryData, callback) => {
-	if(connection){
-		connection.query('INSERT INTO category SET ?', categoryData,
-			(err, result) => {
-				if(err){
-					throw err;
-				}else{
-					callback(null, {
-						'insertId': result.insertId
-					})
-				}
-			})
-	}
+	Category.create({
+		name: categoryData.name,
+		description: categoryData.description
+	}).then(result => {
+		callback(null, result.get());
+	});
 };
 
 categoryModel.updateCategory = (categoryData, callback) => {
-	if(connection){
-		const sql = 'UPDATE category SET '+
-		'name = "' + categoryData.name +
-		'" WHERE id = ' + categoryData.id;
-
-		connection.query(sql, (err,result) => {
-			if(err){
-				throw err;
-			}else{
-				callback(null, {
-                    updatedId: categoryData.id,
-					msg: "Category Updated"
-				});
-			}
-		})
-	}
+	Category.findById(categoryData.id).then(category => {
+		category.updateAttributes({
+			name: categoryData.name,
+			description: categoryData.description
+		}).then(result => callback(null,result.get()));
+	});
 };
 
 categoryModel.deleteCategory = (id, callback) => {
-	if(connection){
-		let sql = 'SELECT * FROM category WHERE id = ' + id;
-
-		connection.query(sql, (err, row) => {
-			if(row){
-				let sql = 'DELETE FROM category WHERE id = ' + id;
-				connection.query(sql, (err, result) => {
-					if(err){
-						throw err;
-					}else{
-						callback(null, {
-                            deletedId: id,
-							msg: 'deleted'
-						})
-					}
-				})
-			}else{
-				callback(null, {
-					msg: 'not exist'
-				})
-			}
-		})
-	}
+	Category.findById(id).then(category => {
+		category.destroy().then(result => callback(null,result.get()));
+	});
 };
 
 module.exports = categoryModel;

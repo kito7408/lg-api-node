@@ -14,12 +14,12 @@ module.exports = function(app){
 			name: req.body.name,
 			size: req.body.size,
 			description: req.body.description,
-			category_id: req.body.category_id,
-			color_id: req.body.color_id
+			categoryId: req.body.categoryId,
+			color: req.body.color
 		};
 
 		Product.insertProduct(productData, (err,data) => {
-			if(data && data.insertId){
+			if(data){
 				res.json({
 					success: true,
 					msg: 'Product Inserted',
@@ -41,12 +41,12 @@ module.exports = function(app){
 			name: req.body.name,
 			size: req.body.size,
 			description: req.body.description,
-			category_id: req.body.category_id,
-			color_id: req.body.color_id
+			categoryId: req.body.categoryId,
+			color: req.body.color
 		};
 
 		Product.updateProduct(productData, (err, data) => {
-			if(data && data.msg){
+			if(data){
 				res.json({
 					success: true,
 					data: data
@@ -62,7 +62,7 @@ module.exports = function(app){
     
     app.delete('/products/:id', (req,res) => {
 		Product.deleteProduct(req.params.id, (err, data) => {
-			if(data && data.msg == 'deleted' || data.msg == 'not exist') {
+			if(data) {
 				res.json({
 					success: true,
 					data: data
