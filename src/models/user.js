@@ -1,86 +1,71 @@
-const mysql = require('mysql');
+var Sequelize = require('sequelize');
 
-connection = mysql.createConnection({
-	host: 'localhost',
-	user: 'root',
-	password: 'root',
-	database: 'testapimysql'
-})
+var connection = new Sequelize('lgsignage','root','root', {
+    dialect: 'mysql',
+    operatorsAliases: false,
+});
+
+const User = connection.define('user',{
+	name: {
+		type: Sequelize.STRING,
+		allowNull: false
+	},
+	email: {
+		type: Sequelize.STRING,
+		allowNull: false
+	},
+	phone_number: {
+		type: Sequelize.STRING,
+		allowNull: false
+	},
+	facebook: {
+		type: Sequelize.STRING,
+		allowNull: false
+	}
+});
+
+//connection.sync();
 
 let userModel = {};
 
 userModel.getUsers = (callback) => {
-	if(connection){
-		connection.query('SELECT * FROM users ORDER BY id',
-			(err, rows) => {
-				if(err){
-					throw err;
-				}else{
-					callback(null, rows);
-				}
-			})
-	}
+	User.findAll().then(users => {
+		callback(null, users);
+	});
 };
 
 userModel.insertUser = (userData, callback) => {
-	if(connection){
-		connection.query('INSERT INTO users SET ?', userData,
-			(err, result) => {
-				if(err){
-					throw err;
-				}else{
-					callback(null, {
-						'insertId': result.insertId
-					})
-				}
-			})
-	}
+	User.create({
+		name: userData.name,
+		email: userData.email,
+		phone_number: userData.phone_number,
+		facebook: userData.facebook
+	}).then(result => {
+		callback(null, result.get());
+	});
 };
 
 userModel.updateUser = (userData, callback) => {
-	if(connection){
-		const sql = 'UPDATE users SET '+
-		'name = "' + userData.name +
-		'", last_name = "' + userData.last_name +
-		'" WHERE id = ' + userData.id;
-
-		connection.query(sql, (err,result) => {
-			if(err){
-				throw err;
-			}else{
-				callback(null, {
-					updatedId: userData.id,
-					msg: "User Updated"
-				});
-			}
-		})
-	}
+	User.findById(userData.id).then(user => {
+		user.updateAttributes({
+			name: userData.name,
+			email: userData.email,
+			phone_number: userData.phone_number,
+			facebook: userData.facebook
+		}).then(result => callback(null,result.get()));
+	});
 };
 
 userModel.deleteUser = (id, callback) => {
-	if(connection){
-		let sql = 'SELECT * FROM users WHERE id = ' + id;
-
-		connection.query(sql, (err, row) => {
-			if(row){
-				let sql = 'DELETE FROM users WHERE id = ' + id;
-				connection.query(sql, (err, result) => {
-					if(err){
-						throw err;
-					}else{
-						callback(null, {
-                            deletedId: id,
-							msg: 'deleted'
-						})
-					}
-				})
-			}else{
-				callback(null, {
-					msg: 'not exist'
-				})
-			}
-		})
-	}
+	User.findById(id).then(user => {
+		user.destroy().then(result => callback(null,result.get()));
+	});
 };
+
+userModel.findById = (id,callback) => {
+	User.findById(id).then(user => {
+		callback(null,user);
+	});
+}
 
 module.exports = userModel;

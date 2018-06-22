@@ -47,4 +47,10 @@ categoryModel.deleteCategory = (id, callback) => {
 	});
 };
 
+categoryModel.findById = (id,callback) => {
+	Category.findById(id).then(category => {
+		callback(null,category);
+	});
+}
+
 module.exports = categoryModel;

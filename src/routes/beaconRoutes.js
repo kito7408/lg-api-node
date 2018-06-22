@@ -6,7 +6,13 @@ module.exports = function(app){
 		Beacon.getBeacons((err, data) => {
 			res.json(data);
 		});
-    });
+	});
+	
+	app.get('/beacons/:id', (req,res) => {
+		Beacon.findById(req.params.id, (err,data) => {
+			res.json(data);
+		})
+	});
     
     app.post('/beacons',(req,res) => {
 		const beaconData = {
@@ -14,11 +20,11 @@ module.exports = function(app){
 			uuid: req.body.uuid,
 			major: req.body.major,
 			minor: req.body.minor,
-			activo: req.body.activo
+			active: req.body.active
 		};
 
 		Beacon.insertBeacon(beaconData, (err,data) => {
-			if(data && data.insertId){
+			if(data){
 				res.json({
 					success: true,
 					msg: 'Beacon Inserted',
@@ -40,11 +46,11 @@ module.exports = function(app){
 			uuid: req.body.uuid,
 			major: req.body.major,
 			minor: req.body.minor,
-			activo: req.body.activo
+			active: req.body.active
 		};
 
 		Beacon.updateBeacon(beaconData, (err, data) => {
-			if(data && data.msg){
+			if(data){
 				res.json({
 					success: true,
 					data: data
@@ -60,13 +66,13 @@ module.exports = function(app){
     
     app.delete('/beacons/:id', (req,res) => {
 		Beacon.deleteBeacon(req.params.id, (err, data) => {
-			if(data && data.msg == 'deleted' || data.msg == 'not exist') {
+			if(data) {
 				res.json({
 					success: true,
-					data: data
+					dataDeleted: data
 				})
 			}else{
-				res.status(500).json({
+				res.json({
 					success: false,
 					msg: 'Error'
 				})

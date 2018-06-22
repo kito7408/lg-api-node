@@ -8,15 +8,23 @@ module.exports = function(app){
 		});
 	});
 
+	app.get('/users/:id', (req,res) => {
+		User.findById(req.params.id, (err,data) => {
+			res.json(data);
+		})
+	});
+
 	app.post('/users',(req,res) => {
 		const userData = {
 			id: null,
 			name: req.body.name,
-			last_name: req.body.last_name
+			email: req.body.email,
+			phone_number: req.body.phone_number,
+			facebook: req.body.facebook
 		};
 
 		User.insertUser(userData, (err,data) => {
-			if(data && data.insertId){
+			if(data){
 				res.json({
 					success: true,
 					msg: 'User Inserted',
@@ -36,11 +44,13 @@ module.exports = function(app){
 		const userData = {
 			id: req.params.id,
 			name: req.body.name,
-			last_name: req.body.last_name
+			email: req.body.email,
+			phone_number: req.body.phone_number,
+			facebook: req.body.facebook
 		};
 
 		User.updateUser(userData, (err, data) => {
-			if(data && data.msg){
+			if(data){
 				res.json({
 					success: true,
 					data: data
@@ -56,13 +66,13 @@ module.exports = function(app){
 
 	app.delete('/users/:id', (req,res) => {
 		User.deleteUser(req.params.id, (err, data) => {
-			if(data && data.msg == 'deleted' || data.msg == 'not exist') {
+			if(data) {
 				res.json({
 					success: true,
-					data: data
+					dataDeleted: data
 				})
 			}else{
-				res.status(500).json({
+				res.json({
 					success: false,
 					msg: 'Error'
 				})

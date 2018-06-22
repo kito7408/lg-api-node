@@ -6,18 +6,24 @@ module.exports = function(app){
 		Prediction.getPredictions((err, data) => {
 			res.json(data);
 		});
-    });
+	});
+	
+	app.get('/predictions/:id', (req,res) => {
+		Prediction.findById(req.params.id, (err,data) => {
+			res.json(data);
+		})
+	});
     
     app.post('/predictions',(req,res) => {
 		const predictionData = {
 			id: null,
-			beacon_id: req.body.beacon_id,
-			product_id: req.body.product_id,
-			user_id: req.body.user_id
+			beaconId: req.body.beaconId,
+			productId: req.body.productId,
+			userId: req.body.userId
 		};
 
 		Prediction.insertPrediction(predictionData, (err,data) => {
-			if(data && data.insertId){
+			if(data){
 				res.json({
 					success: true,
 					msg: 'Prediction Inserted',
@@ -36,13 +42,13 @@ module.exports = function(app){
 
 		const predictionData = {
 			id: req.params.id,
-			beacon_id: req.body.beacon_id,
-			product_id: req.body.product_id,
-			user_id: req.body.user_id
+			beaconId: req.body.beaconId,
+			productId: req.body.productId,
+			userId: req.body.userId
 		};
 
 		Prediction.updatePrediction(predictionData, (err, data) => {
-			if(data && data.msg){
+			if(data){
 				res.json({
 					success: true,
 					data: data
@@ -58,13 +64,13 @@ module.exports = function(app){
     
     app.delete('/predictions/:id', (req,res) => {
 		Prediction.deletePrediction(req.params.id, (err, data) => {
-			if(data && data.msg == 'deleted' || data.msg == 'not exist') {
+			if(data) {
 				res.json({
 					success: true,
-					data: data
+					dataDeleted: data
 				})
 			}else{
-				res.status(500).json({
+				res.json({
 					success: false,
 					msg: 'Error'
 				})

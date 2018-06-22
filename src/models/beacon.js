@@ -1,88 +1,65 @@
-const mysql = require('mysql');
+var Sequelize = require('sequelize');
 
-connection = mysql.createConnection({
-	host: 'localhost',
-	user: 'root',
-	password: 'root',
-	database: 'testapimysql'
-})
+var connection = new Sequelize('lgsignage','root','root', {
+    dialect: 'mysql',
+    operatorsAliases: false,
+});
+
+const Beacon = connection.define('beacon',{
+	uuid: {
+		type: Sequelize.STRING,
+		allowNull: false
+	},
+	major: Sequelize.STRING,
+	minor: Sequelize.STRING,
+	active: {
+		type: Sequelize.BOOLEAN,
+		allowNull: false
+	}
+});
+
+//connection.sync();
 
 let beaconModel = {};
 
 beaconModel.getBeacons = (callback) => {
-	if(connection){
-		connection.query('SELECT * FROM beacon ORDER BY id',
-			(err, rows) => {
-				if(err){
-					throw err;
-				}else{
-					callback(null, rows);
-				}
-			})
-	}
+	Beacon.findAll().then(beacons => {
+		callback(null, beacons);
+	});
 };
 
 beaconModel.insertBeacon = (beaconData, callback) => {
-	if(connection){
-		connection.query('INSERT INTO beacon SET ?', beaconData,
-			(err, result) => {
-				if(err){
-					throw err;
-				}else{
-					callback(null, {
-						'insertId': result.insertId
-					})
-				}
-			})
-	}
+	Beacon.create({
+		uuid: beaconData.uuid,
+		major: beaconData.major,
+		minor: beaconData.minor,
+		active: beaconData.active
+	}).then(result => {
+		callback(null, result.get());
+	});
 };
 
 beaconModel.updateBeacon = (beaconData, callback) => {
-	if(connection){
-		const sql = 'UPDATE beacon SET '+
-		'uuid = "' + beaconData.uuid +
-		'", major = "' + beaconData.major +
-		'", minor = "' + beaconData.minor +
-		'", activo = "' + beaconData.activo +
-		'" WHERE id = ' + beaconData.id;
-
-		connection.query(sql, (err,result) => {
-			if(err){
-				throw err;
-			}else{
-				callback(null, {
-					updatedId: beaconData.id,
-					msg: "Beacon Updated"
-				});
-			}
-		})
-	}
+	Beacon.findById(beaconData.id).then(beacon => {
+		beacon.updateAttributes({
+			uuid: beaconData.uuid,
+			major: beaconData.major,
+			minor: beaconData.minor,
+			active: beaconData.active
+		}).then(result => callback(null,result.get()));
+	});
 };
 
 beaconModel.deleteBeacon = (id, callback) => {
-	if(connection){
-		let sql = 'SELECT * FROM beacon WHERE id = ' + id;
-
-		connection.query(sql, (err, row) => {
-			if(row){
-				let sql = 'DELETE FROM beacon WHERE id = ' + id;
-				connection.query(sql, (err, result) => {
-					if(err){
-						throw err;
-					}else{
-						callback(null, {
-                            deletedId: id,
-							msg: 'deleted'
-						})
-					}
-				})
-			}else{
-				callback(null, {
-					msg: 'not exist'
-				})
-			}
-		})
-	}
+	Beacon.findById(id).then(beacon => {
+		beacon.destroy().then(result => callback(null,result.get()));
+	});
 };
+
+beaconModel.findById = (id,callback) => {
+	Beacon.findById(id).then(beacon => {
+		callback(null,beacon);
+	});
+}
 
 module.exports = beaconModel;

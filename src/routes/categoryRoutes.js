@@ -6,7 +6,13 @@ module.exports = function(app){
         Category.getCategories((err, data) => {
             res.json(data);
         });
-    });
+	});
+	
+	app.get('/categories/:id', (req,res) => {
+		Category.findById(req.params.id, (err,data) => {
+			res.json(data);
+		})
+	});
     
     app.post('/categories',(req,res) => {
 		const categoryData = {
@@ -23,7 +29,7 @@ module.exports = function(app){
 					data: data
 				})
 			}else{
-				res.status(500).json({
+				res.json({
 					success: false,
 					msg: 'Error'
 				})
@@ -62,7 +68,7 @@ module.exports = function(app){
 					dataDeleted: data
 				})
 			}else{
-				res.status(500).json({
+				res.json({
 					success: false,
 					msg: 'Error'
 				})

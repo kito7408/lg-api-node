@@ -14,7 +14,6 @@ app.use(bodyParser.json());
 //routes
 require('./routes/userRoutes')(app);
 require('./routes/categoryRoutes')(app);
-require('./routes/colorRoutes')(app);
 require('./routes/productRoutes')(app);
 require('./routes/imageRoutes')(app);
 require('./routes/beaconRoutes')(app);

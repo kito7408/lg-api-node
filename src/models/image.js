@@ -16,6 +16,28 @@ const Image = connection.define('image',{
 	}
 });
 
+const Product = connection.define('product',{
+	name: {
+		type: Sequelize.STRING,
+		allowNull: false
+	},
+	size: {
+		type: Sequelize.STRING,
+		allowNull: false
+	},
+	description: Sequelize.TEXT,
+	color: {
+		type: Sequelize.STRING,
+		allowNull: false
+	}
+});
+
+Image.belongsTo(Product,{
+	foreignKey: {
+		allowNull: false
+	}
+});
+
 //connection.sync();
 
 let imageModel = {};
@@ -37,50 +59,25 @@ imageModel.insertImage = (imageData, callback) => {
 };
 
 imageModel.updateImage = (imageData, callback) => {
-	if(connection){
-		const sql = 'UPDATE image SET '+
-		'name = "' + imageData.name +
-		'", url = "' + imageData.url +
-		'", product_id = "' + imageData.product_id +
-		'" WHERE id = ' + imageData.id;
-
-		connection.query(sql, (err,result) => {
-			if(err){
-				throw err;
-			}else{
-				callback(null, {
-					updatedId: imageData.id,
-					msg: "Image Updated"
-				});
-			}
-		})
-	}
+	Image.findById(imageData.id).then(image => {
+		image.updateAttributes({
+			name: imageData.name,
+			url: imageData.url,
+			productId: imageData.productId
+		}).then(result => callback(null,result.get()));
+	});
 };
 
 imageModel.deleteImage = (id, callback) => {
-	if(connection){
-		let sql = 'SELECT * FROM image WHERE id = ' + id;
-
-		connection.query(sql, (err, row) => {
-			if(row){
-				let sql = 'DELETE FROM image WHERE id = ' + id;
-				connection.query(sql, (err, result) => {
-					if(err){
-						throw err;
-					}else{
-						callback(null, {
-                            deletedId: id,
-							msg: 'deleted'
-						})
-					}
-				})
-			}else{
-				callback(null, {
-					msg: 'not exist'
-				})
-			}
-		})
-	}
+	Image.findById(id).then(image => {
+		image.destroy().then(result => callback(null,result.get()));
+	});
 };
+
+imageModel.findById = (id,callback) => {
+	Image.findById(id).then(image => {
+		callback(null,image);
+	});
+}
 
 module.exports = imageModel;

@@ -27,7 +27,7 @@ const Product = connection.define('product',{
 		type: Sequelize.STRING,
 		allowNull: false
 	}
-})
+});
 
 const Image = connection.define('image',{
 	name: {
@@ -40,8 +40,16 @@ const Image = connection.define('image',{
 	}
 });
 
-Product.belongsTo(Category);
-Product.hasMany(Image);
+Product.belongsTo(Category,{
+	foreignKey: {
+		allowNull: false
+	}
+});
+Product.hasMany(Image,{
+	foreignKey: {
+		allowNull: false
+	}
+});
 
 //connection.sync({force: true});
 
@@ -49,7 +57,10 @@ let productModel = {};
 
 productModel.getProducts = (callback) => {
 	Product.findAll({
-		include: Category,Image
+		include: [
+			{ model: Category},
+			{ model: Image}
+		]
 	}).then(products => {
 		callback(null, products);
 	});
@@ -84,5 +95,16 @@ productModel.deleteProduct = (id, callback) => {
 		product.destroy().then(result => callback(null,result.get()));
 	});
 };
+
+productModel.findById = (id,callback) => {
+	Product.findById(id,{
+		include: [
+			{ model: Category},
+			{ model: Image}
+		]
+	}).then(product => {
+		callback(null,product);
+	});
+}
 
 module.exports = productModel;

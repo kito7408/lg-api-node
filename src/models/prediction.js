@@ -1,87 +1,175 @@
-const mysql = require('mysql');
+var Sequelize = require('sequelize');
 
-connection = mysql.createConnection({
-	host: 'localhost',
-	user: 'root',
-	password: 'root',
-	database: 'testapimysql'
-})
+var connection = new Sequelize('lgsignage','root','root', {
+    dialect: 'mysql',
+    operatorsAliases: false,
+});
+
+const Prediction = connection.define('prediction');
+
+const User = connection.define('user',{
+	name: {
+		type: Sequelize.STRING,
+		allowNull: false
+	},
+	email: {
+		type: Sequelize.STRING,
+		allowNull: false
+	},
+	phone_number: {
+		type: Sequelize.STRING,
+		allowNull: false
+	},
+	facebook: {
+		type: Sequelize.STRING,
+		allowNull: false
+	}
+});
+
+const Product = connection.define('product',{
+	name: {
+		type: Sequelize.STRING,
+		allowNull: false
+	},
+	size: {
+		type: Sequelize.STRING,
+		allowNull: false
+	},
+	description: Sequelize.TEXT,
+	color: {
+		type: Sequelize.STRING,
+		allowNull: false
+	}
+});
+
+const Category = connection.define('category',{
+	name: {
+		type: Sequelize.STRING,
+		allowNull: false
+	},
+	description: Sequelize.TEXT
+});
+
+const Image = connection.define('image',{
+	name: {
+		type: Sequelize.STRING,
+		allowNull: false
+	},
+	url: {
+		type: Sequelize.TEXT,
+		allowNull:false
+	}
+});
+
+const Beacon = connection.define('beacon',{
+	uuid: {
+		type: Sequelize.STRING,
+		allowNull: false
+	},
+	major: Sequelize.STRING,
+	minor: Sequelize.STRING,
+	active: {
+		type: Sequelize.BOOLEAN,
+		allowNull: false
+	}
+});
+
+Product.belongsTo(Category,{
+	foreignKey: {
+		allowNull: false
+	}
+});
+
+Product.hasMany(Image,{
+	foreignKey: {
+		allowNull: false
+	}
+});
+
+Prediction.belongsTo(Product,{
+	foreignKey: {
+		allowNull: false
+	}
+});
+
+Prediction.belongsTo(User,{
+	foreignKey: {
+		allowNull: false
+	}
+});
+
+Prediction.belongsTo(Beacon,{
+	foreignKey: {
+		allowNull: false
+	}
+});
+
+//connection.sync();
 
 let predictionModel = {};
 
 predictionModel.getPredictions = (callback) => {
-	if(connection){
-		connection.query('SELECT * FROM prediction ORDER BY id',
-			(err, rows) => {
-				if(err){
-					throw err;
-				}else{
-					callback(null, rows);
-				}
-			})
-	}
+	Prediction.findAll({
+		include: [
+			{ model: User},
+			{ model: Beacon},
+			{ model: Product,
+			include: [
+				{ model: Image },
+				{ model: Category }
+			]}
+		]
+	}).then(predictions => {
+		callback(null, predictions);
+	});
 };
 
 predictionModel.insertPrediction = (predictionData, callback) => {
-	if(connection){
-		connection.query('INSERT INTO prediction SET ?', predictionData,
-			(err, result) => {
-				if(err){
-					throw err;
-				}else{
-					callback(null, {
-						'insertId': result.insertId
-					})
-				}
-			})
-	}
+	Prediction.create({
+		userId: predictionData.userId,
+		beaconId: predictionData.beaconId,
+		productId: predictionData.productId
+	}).then(result => {
+		predictionModel.findById(result.get().id, (err,data) => {
+			callback(null, data);
+		});
+	});
 };
 
 predictionModel.updatePrediction = (predictionData, callback) => {
-	if(connection){
-		const sql = 'UPDATE prediction SET '+
-		'beacon_id = "' + predictionData.beacon_id +
-		'", user_id = "' + predictionData.user_id +
-		'", product_id = "' + predictionData.product_id +
-		'" WHERE id = ' + predictionData.id;
-
-		connection.query(sql, (err,result) => {
-			if(err){
-				throw err;
-			}else{
-				callback(null, {
-					updatedId: predictionData.id,
-					msg: "Prediction Updated"
-				});
-			}
-		})
-	}
+	Prediction.findById(predictionData.id).then(prediction => {
+		prediction.updateAttributes({
+			userId: predictionData.userId,
+			beaconId: predictionData.beaconId,
+			productId: predictionData.productId
+		}).then(result => {
+			predictionModel.findById(result.get().id, (err,data) => {
+				callback(null, data);
+			});
+		});
+	});
 };
 
 predictionModel.deletePrediction = (id, callback) => {
-	if(connection){
-		let sql = 'SELECT * FROM prediction WHERE id = ' + id;
-
-		connection.query(sql, (err, row) => {
-			if(row){
-				let sql = 'DELETE FROM prediction WHERE id = ' + id;
-				connection.query(sql, (err, result) => {
-					if(err){
-						throw err;
-					}else{
-						callback(null, {
-                            deletedId: id,
-							msg: 'deleted'
-						})
-					}
-				})
-			}else{
-				callback(null, {
-					msg: 'not exist'
-				})
-			}
-		})
-	}
+	Prediction.findById(id).then(prediction => {
+		prediction.destroy().then(result => callback(null,result.get()));
+	});
 };
+
+predictionModel.findById = (id,callback) => {
+	Prediction.findById(id,{
+		include: [
+			{ model: User},
+			{ model: Beacon},
+			{ model: Product,
+			include: [
+				{ model: Image },
+				{ model: Category }
+			]}
+		]
+	}).then(prediction => {
+		callback(null,prediction);
+	});
+}
 
 module.exports = predictionModel;

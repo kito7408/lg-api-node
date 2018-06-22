@@ -6,7 +6,13 @@ module.exports = function(app){
 		Product.getProducts((err, data) => {
 			res.json(data);
 		});
-    });
+	});
+	
+	app.get('/products/:id', (req,res) => {
+		Product.findById(req.params.id, (err,data) => {
+			res.json(data);
+		})
+	});
     
     app.post('/products',(req,res) => {
 		const productData = {
@@ -68,7 +74,7 @@ module.exports = function(app){
 					data: data
 				})
 			}else{
-				res.status(500).json({
+				res.json({
 					success: false,
 					msg: 'Error'
 				})

@@ -7,7 +7,13 @@ module.exports = function(app){
 			res.json(data);
 		});
     });
-    
+	
+	app.get('/images/:id', (req,res) => {
+		Image.findById(req.params.id, (err,data) => {
+			res.json(data);
+		})
+	});
+	
     app.post('/images',(req,res) => {
 		const imageData = {
 			id: null,
@@ -61,10 +67,10 @@ module.exports = function(app){
 			if(data) {
 				res.json({
 					success: true,
-					data: data
+					dataDeleted: data
 				})
 			}else{
-				res.status(500).json({
+				res.json({
 					success: false,
 					msg: 'Error'
 				})
