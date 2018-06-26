@@ -18,6 +18,8 @@ require('./routes/productRoutes')(app);
 require('./routes/imageRoutes')(app);
 require('./routes/beaconRoutes')(app);
 require('./routes/predictionRoutes')(app);
+require('./routes/stateRoutes')(app);
+require('./routes/historialRoutes')(app);
 
 
 app.listen(app.get('port'), () => {
