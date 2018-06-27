@@ -43,7 +43,9 @@ Image.belongsTo(Product,{
 let imageModel = {};
 
 imageModel.getImages = (callback) => {
-	Image.findAll().then(images => {
+	Image.findAll({
+		include: Product
+	}).then(images => {
 		callback(null, images);
 	});
 };
@@ -75,7 +77,9 @@ imageModel.deleteImage = (id, callback) => {
 };
 
 imageModel.findById = (id,callback) => {
-	Image.findById(id).then(image => {
+	Image.findById(id,{
+		include: Product
+	}).then(image => {
 		callback(null,image);
 	});
 }
