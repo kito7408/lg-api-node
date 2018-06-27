@@ -30,7 +30,7 @@ Historial.belongsTo(User,{
     foreignKey: false
 });
 
-//connection.sync();
+connection.sync();
 
 let historialModel = {};
 

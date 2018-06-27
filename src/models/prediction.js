@@ -104,7 +104,7 @@ Prediction.belongsTo(Beacon,{
 	}
 });
 
-//connection.sync();
+connection.sync();
 
 let predictionModel = {};
 

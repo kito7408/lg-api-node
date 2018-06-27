@@ -51,7 +51,7 @@ Product.hasMany(Image,{
 	}
 });
 
-//connection.sync({force: true});
+connection.sync();
 
 let productModel = {};
 

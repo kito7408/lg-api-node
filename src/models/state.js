@@ -60,7 +60,7 @@ State.belongsTo(Image, {
     }
 })
 
-//connection.sync();
+connection.sync();
 
 let stateModel = {};
 

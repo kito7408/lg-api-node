@@ -18,7 +18,7 @@ const Beacon = connection.define('beacon',{
 	}
 });
 
-//connection.sync();
+connection.sync();
 
 let beaconModel = {};
 

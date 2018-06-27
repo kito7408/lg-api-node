@@ -13,7 +13,7 @@ const Category = connection.define('category',{
 	description: Sequelize.TEXT
 });
 
-//connection.sync();
+connection.sync();
 
 let categoryModel = {};
 

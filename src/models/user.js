@@ -24,7 +24,7 @@ const User = connection.define('user',{
 	}
 });
 
-//connection.sync();
+connection.sync();
 
 let userModel = {};
 

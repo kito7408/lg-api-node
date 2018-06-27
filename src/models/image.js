@@ -38,7 +38,7 @@ Image.belongsTo(Product,{
 	}
 });
 
-//connection.sync();
+connection.sync();
 
 let imageModel = {};
 
