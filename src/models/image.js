@@ -1,58 +1,7 @@
-var Sequelize = require('sequelize');
+var connection = require('./connection');
 
-var connection = new Sequelize('lgsignage','root','root', {
-    dialect: 'mysql',
-    operatorsAliases: false,
-});
-
-const Image = connection.define('image',{
-	name: {
-		type: Sequelize.STRING,
-		allowNull: false
-	},
-	url: {
-		type: Sequelize.TEXT,
-		allowNull:false
-	}
-});
-
-const Product = connection.define('product',{
-	name: {
-		type: Sequelize.STRING,
-		allowNull: false
-	},
-	size: {
-		type: Sequelize.STRING,
-		allowNull: false
-	},
-	description: Sequelize.TEXT,
-	color: {
-		type: Sequelize.STRING,
-		allowNull: false
-	}
-});
-
-const Category = connection.define('category',{
-	name: {
-		type: Sequelize.STRING,
-		allowNull: false
-	},
-	description: Sequelize.TEXT
-});
-
-Product.belongsTo(Category,{
-	foreignKey: {
-		allowNull: false
-	}
-});
-
-Image.belongsTo(Product,{
-	foreignKey: {
-		allowNull: false
-	}
-});
-
-connection.sync();
+const Image = connection.Image;
+const Product = connection.Product;
 
 let imageModel = {};
 

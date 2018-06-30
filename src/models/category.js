@@ -1,19 +1,6 @@
-var Sequelize = require('sequelize');
+var connection = require('./connection');
 
-var connection = new Sequelize('lgsignage','root','root', {
-    dialect: 'mysql',
-    operatorsAliases: false,
-});
-
-const Category = connection.define('category',{
-	name: {
-		type: Sequelize.STRING,
-		allowNull: false
-	},
-	description: Sequelize.TEXT
-});
-
-connection.sync();
+const Category = connection.Category;
 
 let categoryModel = {};
 

@@ -1,66 +1,9 @@
-var Sequelize = require('sequelize');
+var connection = require('./connection');
 
-var connection = new Sequelize('lgsignage','root','root', {
-    dialect: 'mysql',
-    operatorsAliases: false,
-});
-
-const User = connection.define('user',{
-	name: {
-		type: Sequelize.STRING,
-		allowNull: false
-	},
-	email: {
-		type: Sequelize.STRING,
-		allowNull: false
-	},
-	phone_number: {
-		type: Sequelize.STRING,
-		allowNull: false
-	},
-	facebook: {
-		type: Sequelize.STRING,
-		allowNull: false
-	}
-});
-
-const Image = connection.define('image',{
-	name: {
-		type: Sequelize.STRING,
-		allowNull: false
-	},
-	url: {
-		type: Sequelize.TEXT,
-		allowNull:false
-	}
-});
-
-const State = connection.define('state',{
-    state: {
-        type:Sequelize.BOOLEAN,
-        allowNull: false
-    }
-});
-
-const Historial = connection.define('historial');
-
-Historial.belongsTo(User,{
-    foreignKey: false
-});
-
-State.belongsTo(User,{
-    foreignKey: {
-        allowNull: false
-    }
-});
-
-State.belongsTo(Image, {
-    foreignKey: {
-        allowNull: false
-    }
-})
-
-connection.sync();
+const State = connection.State;
+const User = connection.User;
+const Image = connection.Image;
+const Historial = connection.Historial;
 
 let stateModel = {};
 

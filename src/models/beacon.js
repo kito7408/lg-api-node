@@ -1,24 +1,6 @@
-var Sequelize = require('sequelize');
+var connection = require('./connection');
 
-var connection = new Sequelize('lgsignage','root','root', {
-    dialect: 'mysql',
-    operatorsAliases: false,
-});
-
-const Beacon = connection.define('beacon',{
-	uuid: {
-		type: Sequelize.STRING,
-		allowNull: false
-	},
-	major: Sequelize.STRING,
-	minor: Sequelize.STRING,
-	active: {
-		type: Sequelize.BOOLEAN,
-		allowNull: false
-	}
-});
-
-connection.sync();
+const Beacon = connection.Beacon;
 
 let beaconModel = {};
 

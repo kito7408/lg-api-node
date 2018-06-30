@@ -1,30 +1,6 @@
-var Sequelize = require('sequelize');
+var connection = require('./connection');
 
-var connection = new Sequelize('lgsignage','root','root', {
-    dialect: 'mysql',
-    operatorsAliases: false,
-});
-
-const User = connection.define('user',{
-	name: {
-		type: Sequelize.STRING,
-		allowNull: false
-	},
-	email: {
-		type: Sequelize.STRING,
-		allowNull: false
-	},
-	phone_number: {
-		type: Sequelize.STRING,
-		allowNull: false
-	},
-	facebook: {
-		type: Sequelize.STRING,
-		allowNull: false
-	}
-});
-
-connection.sync();
+const User = connection.User;
 
 let userModel = {};
 
