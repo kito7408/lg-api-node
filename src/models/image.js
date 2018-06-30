@@ -32,6 +32,20 @@ const Product = connection.define('product',{
 	}
 });
 
+const Category = connection.define('category',{
+	name: {
+		type: Sequelize.STRING,
+		allowNull: false
+	},
+	description: Sequelize.TEXT
+});
+
+Product.belongsTo(Category,{
+	foreignKey: {
+		allowNull: false
+	}
+});
+
 Image.belongsTo(Product,{
 	foreignKey: {
 		allowNull: false
